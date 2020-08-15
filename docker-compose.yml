@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  sitlmavlinktest:
+    image: sitlmavlinktest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      acomnet:
+        ipv4_address: 164.2.0.2
+    depends_on:
+      - sitl
+    volumes: ['./:/app']
+  
+  sitl:
+    image: ubcuas/uasitl:latest
+    environment:
+      NUMCOPTERS: 1
+      # Set location to UBC thunderbird field
+      LAT: 49.2592231
+      LON: -123.2415589
+      ALT: 96
+    tty: true
+    ports:
+      - 5760-5780:5760-5780
+    hostname: acom-sitl
+    networks:
+      acomnet:
+        ipv4_address: 164.2.0.3
+
+
+networks:
+  acomnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 164.2.0.0/16
