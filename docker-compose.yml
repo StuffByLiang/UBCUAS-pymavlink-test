@@ -24,6 +24,7 @@ services:
     tty: true
     ports:
       - 5760-5780:5760-5780
+      - 14550-14570:14550-14570
     hostname: acom-sitl
     networks:
       acomnet:
