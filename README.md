@@ -15,6 +15,8 @@ Ways to fix
 
 2. Somehow flush all other messages
 
+FIXED implemented in app.py as `empty_socket`. thank god. took a while to figure out
+
 ## Getting Started
 
 ### Prerequisites

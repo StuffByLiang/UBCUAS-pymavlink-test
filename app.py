@@ -1,6 +1,7 @@
 from pymavlink import mavutil
 import time
 from src.telemetry import Telemetry
+import select
 
 # connect to autopilot system
 mavlink_connection = mavutil.mavlink_connection('tcp:164.3.0.3:5760', retries=10)
@@ -22,7 +23,22 @@ if you comment the following code out, you'll notice that from the main thread's
 GPS_RAW_INT time_usec data does not reflect real time data
 
 """
-telemetry.start_polling()
+# telemetry.start_polling()
+
+def empty_socket(mavlink_connection):
+    """
+    empties all incoming data from the mavlink connection
+
+    Args:
+        mavlink_connection
+    """
+    while True:
+        try:
+            n = mavlink_connection.mav.bytes_needed()
+            mavlink_connection.port.recv(n)
+        except:
+            break
+    
 
 # MAIN THREAD LOOP (i want to print out stuff every 2 seconds)
 while True:
@@ -35,6 +51,7 @@ while True:
     #     print('No GPS_RAW_INT message received')
     
     try:
+        empty_socket(mavlink_connection)
         # print(mavlink_connection.location()) # this helper function calls recv_match(type="GPS_RAW_INT")
         msg = mavlink_connection.recv_match(type="GPS_RAW_INT", blocking=True)
         print("\nMain thread msg recieved after " + str(time.time() - last_recieved_time) + " seconds")
